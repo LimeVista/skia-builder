@@ -10,10 +10,10 @@
 * 添加源
 ```groovy
 allprojects {
-	repositories {
-		// ...
-        maven { url "https://raw.githubusercontent.com/LimeVista/skia-builder/master/prebuilt" }
-	}
+  repositories {
+    // ...
+    maven { url "https://raw.githubusercontent.com/LimeVista/skia-builder/master/prebuilt" }
+  }
 }
 ```
 * 引入
