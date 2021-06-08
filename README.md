@@ -19,7 +19,7 @@ allprojects {
 * 引入
 ```groovy
 dependencies {
-    implementation 'me.limeice.skia:skia:1.85.1'
+    implementation 'me.limeice.skia:skia:1.90.1'
 }
 ```
 * 启用 `prefab`
