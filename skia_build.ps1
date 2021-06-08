@@ -1,9 +1,10 @@
 ﻿$cur_dir = $PSScriptRoot
 
-$ver = 'm85'            # skia 版本
-$full_mode = $true     # 是否编译完整版本，带 skia shaper 和 pdf 支持
+$ver = 'm90'            # skia 版本
+$full_mode = $true      # 是否编译完整版本，带 skia shaper 和 pdf 支持
 $enable_pdf = $(If ($full_mode) { "true" } Else { "false" })
 $ver_name = "1.$($ver.Substring(1)).1"
+$ver_code = "$($ver.Substring(1))01"
 
 $depot_dir = "${cur_dir}/depot_tools"
 $skia_args_1 = 'is_official_build=true is_debug=false skia_use_vulkan=true ndk_api=26 '
@@ -18,6 +19,19 @@ $skia_args_ext = 'skia_enable_skshaper=true skia_enable_skparagraph=true'
 
 $skia_args = "${skia_args_1}${skia_args_2}${skia_args_3}${skia_args_4}${skia_args_5}${skia_args_pdf} ${skia_args_ndk}"
 $skia_args = $(If ($full_mode) { "${skia_args} ${skia_args_ext}" } Else { $skia_args })
+
+function Write-HashFile {
+    Param ($path, $algorithm)
+    $hash = Get-FileHash $path -Algorithm $algorithm
+    $name = ($algorithm).ToLower()
+    $hash_code = ($hash.Hash).ToLower()
+    
+    # PowerShell 6+
+    # $hash_code | Out-File "${path}.$name" -Force -NoNewline -Encoding utf8NoBOM
+    
+    $Utf8NoBomEncoding = New-Object System.Text.UTF8Encoding $False
+    [System.IO.File]::WriteAllText("${path}.$name", $hash_code, $Utf8NoBomEncoding)
+}
 
 Write-Output "检查环境..."
 
@@ -59,6 +73,7 @@ $out_dir = "${cur_dir}/skia/out/"
 $output_dir = "${cur_dir}/skia-$ver_name"
 $output_lib = "${output_dir}/prefab/modules/skia/libs"
 $output_header = "${output_dir}/prefab/modules/skia/include"
+$maven_dir = "${cur_dir}/out/$ver_name"
 $lib_skia = "libskia.a"
 
 Write-Output "开始整合库..."
@@ -67,8 +82,12 @@ Set-Location $cur_dir
 
 If (-not (Test-Path -Path $output_dir)) {
     Copy-Item -Path "$cur_dir/prefab/skia-VERSION" -Destination "$output_dir" -Recurse
+    
     $json_path = "$output_dir/prefab/prefab.json"
     (Get-Content $json_path).replace("VERSION", $ver_name) | Set-Content $json_path
+
+    $xml_path = "$output_dir/AndroidManifest.xml"
+    (Get-Content $xml_path).replace("VER_NAME", $ver_name).replace("VER_CODE", $ver_code) | Set-Content $xml_path
 }
 
 If (-not (Test-Path -Path $output_header)) {
@@ -91,5 +110,26 @@ Write-Output "构建AAR..."
 # Compress-Archive -Path $output_dir/* -DestinationPath skia.zip -Force
 # Move-Item "skia.zip" "skia-${ver_name}.aar" -Force
 jar cfM skia-${ver_name}.aar -C $output_dir ./
+
+Write-Output "构建完成。"
+
+
+Write-Output "构建文件..."
+
+If (-not (Test-Path -Path $maven_dir)) {
+    New-Item $maven_dir -Type Directory
+}
+
+$pom_path = "${maven_dir}/skia-${ver_name}.pom"
+$aar_path = "${maven_dir}/skia-${ver_name}.aar"
+
+Move-Item -Force "${cur_dir}/skia-${ver_name}.aar" $aar_path
+Copy-Item -Force "${cur_dir}/skia.pom" $pom_path
+(Get-Content $pom_path).replace("VER_NAME", $ver_name) | Set-Content $pom_path
+
+Write-HashFile -Path $aar_path -Algorithm SHA1
+Write-HashFile -Path $aar_path -Algorithm MD5
+Write-HashFile -Path $pom_path -Algorithm SHA1
+Write-HashFile -Path $pom_path -Algorithm MD5
 
 Write-Output "构建完成。"

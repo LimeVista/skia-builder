@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <groupId>me.limeice.skia</groupId>
+  <artifactId>skia</artifactId>
+  <version>VER_NAME</version>
+  <packaging>aar</packaging>
+  <name>oboe</name>
+  <description>The AAR for Skia.</description>
+  <url>https://github.com/LimeVista/skia-builder</url>
+  <licenses>
+    <license>
+      <name>The Oboe License</name>
+      <url>https://github.com/google/skia/blob/master/LICENSE</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  <developers>
+    <developer>
+      <name>Skia Builder Power By Google Skia</name>
+    </developer>
+  </developers>
+  <scm>
+    <connection>scm:git:https://github.com/google/skia</connection>
+    <url>https://github.com/google/skia</url>
+  </scm>
+</project>
