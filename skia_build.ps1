@@ -1,6 +1,6 @@
 ﻿$cur_dir = $PSScriptRoot
 
-$ver = 'm90'            # skia 版本
+$ver = 'm106'            # skia 版本
 $full_mode = $true      # 是否编译完整版本，带 skia shaper 和 pdf 支持
 $enable_pdf = $(If ($full_mode) { "true" } Else { "false" })
 $ver_name = "1.$($ver.Substring(1)).1"

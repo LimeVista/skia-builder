@@ -19,7 +19,7 @@ allprojects {
 * 引入
 ```groovy
 dependencies {
-    implementation 'me.limeice.skia:skia:1.90.1'
+    implementation 'me.limeice.skia:skia:1.106.1'
 }
 ```
 * 启用 `prefab`
@@ -46,4 +46,13 @@ target_link_libraries(yourLib
 ```
 
 ## 构建
-详见 `skia_build.ps1` 暂时仅提供 `Windows` 构建脚本
+* 需要 NDK、Python3
+* 进入 skia-builder 目录
+* 执行 `.\skia_build.ps1 你的NDK目录`
+* 详见 `skia_build.ps1` 暂时仅提供 `Windows` 构建脚本
+
+## 版本记录
+### 1.106.1
+* 2022-10-10
+* NDK ver: 25.1.8937393
+* Skia ver: M106
